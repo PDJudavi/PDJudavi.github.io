@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Judavi — K-pop composer, arranger and producer based in Seoul.">
+<meta property="og:title" content="JUDAVI">
+<meta property="og:description" content="Composer · Arranger · Producer — Seoul">
+<title>Judaviachive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: record-label catalog — oversized wordmark, square sleeve grid for releases, setlist-style stage log, quiet footer */
+:root{
+  --bg:#0c0c10;         /* ink, faint violet bias */
+  --surface:#15151c;
+  --line:#2a2a35;
+  --fg:#ecebf2;
+  --muted:#8d8b9c;
+  --accent:#c9b8ff;     /* chrome lilac */
+  --accent-2:#ff8fc7;   /* hyperpop pink, used sparingly */
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:clamp(16px,4vw,56px);padding-block:0 64px}
+a{color:inherit}
+.wrap{max-width:1180px;margin-inline:auto;display:flex;flex-direction:column;gap:96px}
+
+/* nav */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:18px;background:color-mix(in oklab,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin-inline:calc(-1*clamp(16px,4vw,56px));padding-inline:clamp(16px,4vw,56px)}
+.logo{font-family:var(--f-display);font-weight:800;font-size:15px;letter-spacing:.06em;text-decoration:none}
+nav ul{display:flex;gap:clamp(14px,3vw,32px);list-style:none;margin:0;padding:0;font-family:var(--f-mono);font-size:12px;text-transform:uppercase;letter-spacing:.12em}
+nav ul a{text-decoration:none;color:var(--muted)}
+nav ul a:hover,nav ul a:focus-visible{color:var(--fg)}
+
+/* hero */
+.hero{padding-top:72px;display:flex;flex-direction:column;gap:28px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.wordmark{font-family:var(--f-display);font-weight:800;font-size:clamp(64px,17vw,232px);line-height:.86;letter-spacing:-.04em;margin:0;
+  background:linear-gradient(100deg,var(--fg) 0%,var(--fg) 45%,var(--accent) 70%,var(--accent-2) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:32px}
+.lede{max-width:46ch;font-size:clamp(16px,1.6vw,19px);color:var(--fg);margin:0;text-wrap:pretty}
+.lede span{color:var(--muted)}
+.stats{display:flex;gap:clamp(24px,4vw,48px);font-variant-numeric:tabular-nums}
+.stat b{display:block;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,3.4vw,40px);line-height:1}
+.stat small{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.genres{display:flex;flex-wrap:wrap;gap:8px}
+.genres span{font-family:var(--f-mono);font-size:12px;padding:5px 11px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+
+/* section heads */
+.sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:16px;border-top:1px solid var(--line);padding-top:20px;margin-bottom:28px}
+h2{font-family:var(--f-display);font-weight:600;font-size:clamp(26px,3.4vw,40px);letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2 small{display:block;font-family:var(--f-body);font-weight:400;font-size:14px;letter-spacing:0;color:var(--muted);margin-top:6px}
+
+/* filters */
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.filters button{font:500 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:9px 13px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.filters button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* release grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:28px 20px}
+.rel{display:flex;flex-direction:column;gap:10px;min-width:0}
+.sleeve{position:relative;aspect-ratio:1/1;max-width:100%;border-radius:4px;overflow:hidden;background:var(--surface)}
+.sleeve img{width:100%;height:100%;object-fit:cover;display:block}
+.gen{position:absolute;inset:0;padding:14px;display:flex;flex-direction:column;justify-content:space-between;
+  background:
+    radial-gradient(120% 90% at 85% 10%, hsl(var(--h) 85% 72% / .55), transparent 55%),
+    radial-gradient(90% 80% at 10% 100%, hsl(calc(var(--h) + 50) 70% 45% / .55), transparent 60%),
+    hsl(var(--h) 22% 11%)}
+.gen::after{content:"";position:absolute;inset:0;opacity:.18;mix-blend-mode:overlay;
+  background-image:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 3px)}
+.gen .t{font-family:var(--f-display);font-weight:800;font-size:clamp(17px,1.9vw,22px);line-height:1.02;letter-spacing:-.02em;color:#fff;word-break:keep-all;overflow-wrap:anywhere;position:relative;z-index:1}
+.gen .a{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#ffffffcc;position:relative;z-index:1}
+.rel .meta{min-width:0}
+.rel .title{font-weight:600;font-size:14.5px;line-height:1.35;overflow-wrap:anywhere}
+.rel .artist{color:var(--muted);font-size:13.5px}
+.roles{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.role{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:3px;background:var(--surface);color:var(--muted);border:1px solid var(--line)}
+.role.c{color:var(--accent);border-color:color-mix(in oklab,var(--accent) 35%,var(--line))}
+.rel a.listen{font-family:var(--f-mono);font-size:11px;color:var(--accent);text-decoration:none}
+
+/* stage log */
+.log{display:flex;flex-direction:column}
+.log-row{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:20px;align-items:baseline;padding-block:18px;border-bottom:1px solid var(--line)}
+.log-row .yr{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.log-row .what{font-family:var(--f-display);font-weight:600;font-size:clamp(16px,1.8vw,20px);letter-spacing:-.01em;line-height:1.25}
+.log-row .detail{font-size:13.5px;color:var(--muted);margin-top:4px}
+.log-row .tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:right}
+.log-row.new .what::after{content:"NEW";font-family:var(--f-mono);font-weight:500;font-size:10px;letter-spacing:.1em;color:var(--bg);background:var(--accent-2);padding:2px 6px;border-radius:3px;margin-left:10px;vertical-align:3px}
+@media (max-width:620px){.log-row{grid-template-columns:52px minmax(0,1fr)}.log-row .tag{grid-column:2;text-align:left}}
+
+/* screen */
+.screen{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:22px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.card h3{font-family:var(--f-display);font-weight:600;font-size:19px;margin:0;line-height:1.25}
+.card p{margin:0;color:var(--muted);font-size:13.5px}
+
+/* contact */
+.contact{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px}
+.contact .big{font-family:var(--f-display);font-weight:800;font-size:clamp(36px,7vw,88px);line-height:.95;letter-spacing:-.03em;margin:0}
+.contact p{color:var(--muted);margin:0;max-width:40ch}
+footer{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--line);padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+@media (prefers-reduced-motion:no-preference){
+  .rel{transition:transform .25s ease}
+  .rel:hover{transform:translateY(-3px)}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="#top">JUDAVI</a>
+  <ul>
+    <li><a href="#releases">Releases</a></li>
+    <li><a href="#stage">Stage</a></li>
+    <li><a href="#screen">Film</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="wrap" id="top">
+  <header class="hero">
+    <div class="eyebrow">Composer · Arranger · Producer — Seoul</div>
+    <h1 class="wordmark">JUDAVI</h1>
+    <div class="hero-row">
+      <p class="lede">K-pop releases, idol stage arrangements and film scoring. Written, composed, arranged and vocal-directed in-house.<br><span>작사 · 작곡 · 편곡 · 스코어링 · 보컬 디렉팅</span></p>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="genres" id="genres"></div>
+  </header>
+
+  <section id="releases">
+    <div class="sec-head">
+      <h2>Releases<small>발매 크레딧</small></h2>
+      <div class="filters" id="filters" role="group" aria-label="Filter by role"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="stage">
+    <div class="sec-head">
+      <h2>Stage Arrangement<small>무대 편곡 · 라이브</small></h2>
+    </div>
+    <div class="log" id="log"></div>
+  </section>
+
+  <section id="screen">
+    <div class="sec-head">
+      <h2>Film &amp; OST<small>영화 · 드라마 · OST</small></h2>
+    </div>
+    <div class="screen" id="film"></div>
+  </section>
+
+  <section id="contact">
+    <div class="sec-head"><h2>Contact<small>작업 문의</small></h2></div>
+    <div class="contact">
+      <p class="big">Let's make<br>the next one.</p>
+      <p>Publishing, song camps, stage arrangement and scoring inquiries.<br>퍼블리싱 · 송캠프 · 무대편곡 · 영화음악 문의</p>
+    </div>
+  </section>
+
+  <footer><span>© Judavi</span><span id="updated"></span></footer>
+</div>
+
+<script>
+/* ===== DATA — edit here only ===== */
+const SITE = { updated: "2026-10" };
+
+const GENRES = ["Hyperpop","Pop","Band","DnB","UK Garage","French House","Boom Bap","Hyper Hip-hop","90's","Mid-tempo","Ballad","OST"];
+
+// roles: W = Lyrics/Written, C = Composed, A = Arranged, V = Vocal Directing, S = Scoring
+// cover: image URL or data URI (null → generated sleeve) / link: streaming URL / year: release year
+const RELEASES = [
+  {artist:"김성중", title:"Spotlight", roles:["W","C","A"]},
+  {artist:"TOMi", title:"Take my hand", roles:["W","C","A"]},
+  {artist:"DOJEHYUN", title:"NTNS", roles:["W","C","A"]},
+  {artist:"ZEZE", title:"Glow", roles:["W","C","A"]},
+  {artist:"ZEZE", title:"ICY MAN (feat. ma1ro)", roles:["W","C","A"]},
+  {artist:"Crush", title:"Sweet Love", roles:["C","A"], note:"취향저격 그녀 X Crush"},
+  {artist:"강승식", title:"우리가 담긴 계절", roles:["C","A"]},
+  {artist:"유희도", title:"List (リスト)", roles:["C","A"]},
+  {artist:"Great Guys", title:"RUN", roles:["C","A"]},
+  {artist:"Black Combat OST", title:"CIVIL WAR", roles:["C","A"], note:"Tussle Over · Fall out"},
+  {artist:"존 노 John Noh", title:"Birth OST", roles:["C","A","S"], note:"우리가 함께 한다는 것은 · lumen"},
+  {artist:"건민 of B.I.G.", title:"Senorita", roles:["C","A"]},
+  {artist:"seoseo", title:"Back and Forth", roles:["C","A"]},
+  {artist:"Standard1", title:"Valenza (Remix)", roles:["C","A"]},
+  {artist:"10/10", title:"Cliche", roles:["C","A"]},
+  {artist:"judavi, ma1ro", title:"WANT U!", roles:["C","A"]},
+  {artist:"Judavi, ma1ro", title:"싸우지말자", roles:["C","A"]},
+  {artist:"ZEZE", title:"Selfish", roles:["C","A"]},
+  {artist:"SHIN WONHO", title:"Placebo", roles:["A"], note:"ONE — Track 04"},
+  {artist:"bigguyrobin", title:"참 우스운 일이야", roles:["A"], note:"feat. 예디안"},
+  {artist:"곽창석", title:"하루", roles:["A"]},
+  {artist:"Bestie", title:"Where R U?", roles:["A"]},
+  {artist:"Standard1", title:"Valenza", roles:["A"]},
+  {artist:"WISH", title:"Snow and you", roles:["V"], note:"swingBY PROJECT Vol.1"},
+  {artist:"취향상점 Tasty Shop", title:"모든 그대", roles:["V"]},
+];
+
+const STAGE = [
+  {year:2026, what:"n.SSign — Special Session \"TWO ROOMS\"", detail:"Japan tour · Osaka, Fukuoka, Tokyo, Hokkaido, Sendai, Nagoya", tag:"Arrangement", isNew:true},
+  {year:2026, what:"P1Harmony — MOST WANTED ENCORE", detail:"JIUNG · THEO · SOUL solo stages", tag:"Arrangement · Composed"},
+  {year:2025, what:"KEEHO of P1Harmony — The Christmas Song", detail:"Cover", tag:"Arrangement · Instrumental"},
+  {year:2025, what:"FNC KINGDOM 10th Anniversary", detail:"SOUL (P1Harmony) solo · 유태양 (SF9) solo", tag:"Arrangement · Instrumental"},
+  {year:2024, what:"NCPT — 고래 (I'll Dive In To You)", detail:"Cover", tag:"Arrangement"},
+  {year:2023, what:"MBC 쇼! 음악중심 MC Special", detail:"설윤 · 이정하 · 영훈", tag:"Instrumental"},
+  {year:2019, what:"G-EGG Project Japan", detail:"희도 'List' · 건민 'Senorita' (B.I.G.)", tag:"Arrangement"},
+  {year:null, what:"MBC Drama '웰컴2라이프' Live Session", detail:"", tag:"Written · Composed · Arranged"},
+  {year:null, what:"3YE Live Concert", detail:"Marionette · Lumberjack (Acoustic ver.)", tag:"Arrangement"},
+];
+
+const FILM = [
+  {kind:"Short Film · 2026", title:"성장통", desc:"독립 단편영화 음악 · Original score"},
+  {kind:"OST · Scoring", title:"존 노 'Birth'", desc:"우리가 함께 한다는 것은 · lumen — composition, arrangement & scoring"},
+  {kind:"OST", title:"Black Combat — CIVIL WAR", desc:"Tussle Over · Fall out"},
+  {kind:"Drama OST", title:"Sweet Love — Crush", desc:"취향저격 그녀 X Crush"},
+];
+/* ===== END DATA ===== */
+
+const ROLE_LABEL = {W:"Lyrics",C:"Composed",A:"Arranged",V:"Vocal Dir.",S:"Scoring"};
+const FILTERS = [["all","All"],["C","Composed"],["A","Arranged"],["W","Lyrics"],["V","Vocal Dir."]];
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hue = s => { let h=0; for (const ch of s) h = (h*31 + ch.codePointAt(0)) % 360; return h; };
+
+document.getElementById("stats").innerHTML = [
+  [RELEASES.length,"Releases"],[STAGE.length,"Stage works"],["2019","Since"]
+].map(([n,l])=>`<div class="stat"><b>${n}</b><small>${l}</small></div>`).join("");
+document.getElementById("genres").innerHTML = GENRES.map(g=>`<span>${esc(g)}</span>`).join("");
+document.getElementById("updated").textContent = "Updated " + SITE.updated;
+
+let active = "all";
+function renderFilters(){
+  document.getElementById("filters").innerHTML = FILTERS.map(([k,l]) =>
+    `<button type="button" id="f-${k}" data-k="${k}" aria-pressed="${k===active}">${l}</button>`).join("");
+}
+function renderGrid(){
+  const list = RELEASES.filter(r => active==="all" || r.roles.includes(active));
+  document.getElementById("grid").innerHTML = list.map(r => {
+    const art = r.cover
+      ? `<img src="${esc(r.cover)}" alt="${esc(r.title)} cover" loading="lazy">`
+      : `<div class="gen" style="--h:${hue(r.artist+r.title)}"><span class="a">${esc(r.artist)}</span><span class="t">${esc(r.title)}</span></div>`;
+    const roles = r.roles.map(k=>`<span class="role ${k==="C"||k==="W"?"c":""}">${ROLE_LABEL[k]}</span>`).join("");
+    return `<article class="rel">
+      <div class="sleeve">${art}</div>
+      <div class="meta">
+        <div class="title">${esc(r.title)}${r.year?` <span class="artist">· ${r.year}</span>`:""}</div>
+        <div class="artist">${esc(r.artist)}${r.note?` — ${esc(r.note)}`:""}</div>
+        <div class="roles">${roles}</div>
+        ${r.link?`<a class="listen" href="${esc(r.link)}" target="_blank" rel="noopener">Listen ↗</a>`:""}
+      </div></article>`;
+  }).join("");
+}
+document.getElementById("filters").addEventListener("click", e => {
+  const b = e.target.closest("button"); if(!b) return;
+  active = b.dataset.k; renderFilters(); renderGrid();
+});
+document.getElementById("log").innerHTML = STAGE.map(s => `
+  <div class="log-row${s.isNew?" new":""}">
+    <div class="yr">${s.year ?? "—"}</div>
+    <div><div class="what">${esc(s.what)}</div>${s.detail?`<div class="detail">${esc(s.detail)}</div>`:""}</div>
+    <div class="tag">${esc(s.tag)}</div>
+  </div>`).join("");
+document.getElementById("film").innerHTML = FILM.map(f => `
+  <div class="card"><span class="k">${esc(f.kind)}</span><h3>${esc(f.title)}</h3><p>${esc(f.desc)}</p></div>`).join("");
+
+renderFilters(); renderGrid();
+</script>
+</body>
+</html>
