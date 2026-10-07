@@ -92,13 +92,16 @@ h2 small{display:block;font-family:var(--f-body);font-weight:400;font-size:14px;
 
 /* stage log */
 .log{display:flex;flex-direction:column}
-.log-row{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:20px;align-items:baseline;padding-block:18px;border-bottom:1px solid var(--line)}
-.log-row .yr{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.log-row{display:grid;grid-template-columns:76px minmax(0,1fr) auto;gap:20px;align-items:center;padding-block:16px;border-bottom:1px solid var(--line)}
+.log-row .thumb{width:76px;aspect-ratio:4/5;max-width:100%;border-radius:4px;overflow:hidden;background:var(--surface)}
+.log-row .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+.log-row:hover .thumb img{transform:scale(1.05)}
+.log-row .yr{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--muted);font-variant-numeric:tabular-nums;margin-bottom:4px}
 .log-row .what{font-family:var(--f-display);font-weight:600;font-size:clamp(16px,1.8vw,20px);letter-spacing:-.01em;line-height:1.25}
 .log-row .detail{font-size:13.5px;color:var(--muted);margin-top:4px}
 .log-row .tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:right}
 .log-row.new .what::after{content:"NEW";font-family:var(--f-mono);font-weight:500;font-size:10px;letter-spacing:.1em;color:var(--bg);background:var(--accent-2);padding:2px 6px;border-radius:3px;margin-left:10px;vertical-align:3px}
-@media (max-width:620px){.log-row{grid-template-columns:52px minmax(0,1fr)}.log-row .tag{grid-column:2;text-align:left}}
+@media (max-width:620px){.log-row{grid-template-columns:64px minmax(0,1fr);gap:14px;align-items:start}.log-row .thumb{width:64px}.log-row .tag{grid-column:2;text-align:left}}
 
 /* screen */
 .screen{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
@@ -219,15 +222,15 @@ const RELEASES = [
 ];
 
 const STAGE = [
-  {year:2026, what:"n.SSign — Special Session \"TWO ROOMS\"", detail:"Japan tour · Osaka, Fukuoka, Tokyo, Hokkaido, Sendai, Nagoya", tag:"Arrangement", isNew:true},
-  {year:2026, what:"P1Harmony — MOST WANTED ENCORE", detail:"JIUNG · THEO · SOUL solo stages", tag:"Arrangement · Composed"},
-  {year:2025, what:"KEEHO of P1Harmony — The Christmas Song", detail:"Cover", tag:"Arrangement · Instrumental"},
-  {year:2025, what:"FNC KINGDOM 10th Anniversary", detail:"SOUL (P1Harmony) solo · 유태양 (SF9) solo", tag:"Arrangement · Instrumental"},
-  {year:2024, what:"NCPT — 고래 (I'll Dive In To You)", detail:"Cover", tag:"Arrangement"},
-  {year:2023, what:"MBC 쇼! 음악중심 MC Special", detail:"설윤 · 이정하 · 영훈", tag:"Instrumental"},
-  {year:2019, what:"G-EGG Project Japan", detail:"희도 'List' · 건민 'Senorita' (B.I.G.)", tag:"Arrangement"},
-  {year:null, what:"MBC Drama '웰컴2라이프' Live Session", detail:"", tag:"Written · Composed · Arranged"},
-  {year:null, what:"3YE Live Concert", detail:"Marionette · Lumberjack (Acoustic ver.)", tag:"Arrangement"},
+  {year:2026, img:"stage/nssign-two-rooms.webp", what:"n.SSign — Special Session \"TWO ROOMS\"", detail:"Japan tour · Osaka, Fukuoka, Tokyo, Hokkaido, Sendai, Nagoya", tag:"Arrangement", isNew:true},
+  {year:2026, img:"stage/p1h-encore.webp", what:"P1Harmony — MOST WANTED ENCORE", detail:"JIUNG · THEO · SOUL solo stages", tag:"Arrangement · Composed"},
+  {year:2025, img:"stage/keeho-xmas.webp", what:"KEEHO of P1Harmony — The Christmas Song", detail:"Cover", tag:"Arrangement · Instrumental"},
+  {year:2025, img:"stage/fnc-kingdom.webp", what:"FNC KINGDOM 10th Anniversary", detail:"SOUL (P1Harmony) solo · 유태양 (SF9) solo", tag:"Arrangement · Instrumental"},
+  {year:2024, img:"stage/ncpt-whale.webp", what:"NCPT — 고래 (I'll Dive In To You)", detail:"Cover", tag:"Arrangement"},
+  {year:2023, img:"stage/mbc-mc-special.webp", what:"MBC 쇼! 음악중심 MC Special", detail:"설윤 · 이정하 · 영훈", tag:"Instrumental"},
+  {year:2019, img:"stage/g-egg-japan.webp", what:"G-EGG Project Japan", detail:"희도 'List' · 건민 'Senorita' (B.I.G.)", tag:"Arrangement"},
+  {year:null, img:"stage/welcome2life.webp", what:"MBC Drama '웰컴2라이프' Live Session", detail:"", tag:"Written · Composed · Arranged"},
+  {year:null, img:"stage/3ye-live.webp", what:"3YE Live Concert", detail:"Marionette · Lumberjack (Acoustic ver.)", tag:"Arrangement"},
 ];
 
 const FILM = [
@@ -278,8 +281,8 @@ document.getElementById("filters").addEventListener("click", e => {
 });
 document.getElementById("log").innerHTML = STAGE.map(s => `
   <div class="log-row${s.isNew?" new":""}">
-    <div class="yr">${s.year ?? "—"}</div>
-    <div><div class="what">${esc(s.what)}</div>${s.detail?`<div class="detail">${esc(s.detail)}</div>`:""}</div>
+    <div class="thumb">${s.img?`<img src="${esc(s.img)}" alt="${esc(s.what)}" loading="lazy">`:""}</div>
+    <div><div class="yr">${s.year ?? ""}</div><div class="what">${esc(s.what)}</div>${s.detail?`<div class="detail">${esc(s.detail)}</div>`:""}</div>
     <div class="tag">${esc(s.tag)}</div>
   </div>`).join("");
 document.getElementById("film").innerHTML = FILM.map(f => `
