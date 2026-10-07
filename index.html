@@ -133,8 +133,8 @@ footer{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transfo
 <nav>
   <a class="logo" href="#top">JUDAVI</a>
   <ul>
-    <li><a href="#releases">Releases</a></li>
     <li><a href="#stage">Stage</a></li>
+    <li><a href="#releases">Releases</a></li>
     <li><a href="#screen">Film</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -151,19 +151,19 @@ footer{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transfo
     <div class="genres" id="genres"></div>
   </header>
 
+  <section id="stage">
+    <div class="sec-head">
+      <h2>Stage Arrangement<small>무대 편곡 · 라이브</small></h2>
+    </div>
+    <div class="log" id="log"></div>
+  </section>
+
   <section id="releases">
     <div class="sec-head">
       <h2>Releases<small>발매 크레딧</small></h2>
       <div class="filters" id="filters" role="group" aria-label="Filter by role"></div>
     </div>
     <div class="grid" id="grid"></div>
-  </section>
-
-  <section id="stage">
-    <div class="sec-head">
-      <h2>Stage Arrangement<small>무대 편곡 · 라이브</small></h2>
-    </div>
-    <div class="log" id="log"></div>
   </section>
 
   <section id="screen">
@@ -248,7 +248,7 @@ const hue = s => { let h=0; for (const ch of s) h = (h*31 + ch.codePointAt(0)) %
 
 document.getElementById("stats").innerHTML =
   `<div class="stat"><b>2020</b><small>Since</small></div>
-   <div class="jump">${[["releases","Releases"],["stage","Stage"],["screen","Film & OST"],["contact","Contact"]]
+   <div class="jump">${[["stage","Stage"],["releases","Releases"],["screen","Film & OST"],["contact","Contact"]]
      .map(([id,l])=>`<a href="#${id}">${l}<span aria-hidden="true">↓</span></a>`).join("")}</div>`;
 document.getElementById("genres").innerHTML = GENRES.map(g=>`<span>${esc(g)}</span>`).join("");
 document.getElementById("updated").textContent = "Updated " + SITE.updated;
