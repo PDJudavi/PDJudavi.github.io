@@ -48,6 +48,12 @@ nav ul a:hover,nav ul a:focus-visible{color:var(--fg)}
 .stats{display:flex;gap:clamp(24px,4vw,48px);font-variant-numeric:tabular-nums}
 .stat b{display:block;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,3.4vw,40px);line-height:1}
 .stat small{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.stats{align-items:flex-end;flex-wrap:wrap}
+.jump{display:flex;flex-wrap:wrap;gap:8px}
+.jump a{display:inline-flex;align-items:center;gap:8px;font:500 12px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;text-decoration:none;color:var(--fg);padding:11px 15px;border:1px solid var(--line);border-radius:999px;transition:border-color .2s,background .2s}
+.jump a span{color:var(--accent)}
+.jump a:hover,.jump a:focus-visible{border-color:var(--accent);background:var(--surface);outline:none}
+section{scroll-margin-top:72px}
 .genres{display:flex;flex-wrap:wrap;gap:8px}
 .genres span{font-family:var(--f-mono);font-size:12px;padding:5px 11px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
 
@@ -113,6 +119,7 @@ footer a{text-decoration:none;color:var(--fg)}
 footer{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--line);padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
 @media (prefers-reduced-motion:no-preference){
+  html{scroll-behavior:smooth}
   .rel{transition:transform .25s ease}
   .rel:hover{transform:translateY(-3px)}
 }
@@ -236,9 +243,10 @@ const FILTERS = [["all","All"],["C","Composed"],["A","Arranged"],["W","Lyrics"],
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const hue = s => { let h=0; for (const ch of s) h = (h*31 + ch.codePointAt(0)) % 360; return h; };
 
-document.getElementById("stats").innerHTML = [
-  [RELEASES.length,"Releases"],[STAGE.length,"Stage works"],["2019","Since"]
-].map(([n,l])=>`<div class="stat"><b>${n}</b><small>${l}</small></div>`).join("");
+document.getElementById("stats").innerHTML =
+  `<div class="stat"><b>2020</b><small>Since</small></div>
+   <div class="jump">${[["releases","Releases"],["stage","Stage"],["screen","Film & OST"],["contact","Contact"]]
+     .map(([id,l])=>`<a href="#${id}">${l}<span aria-hidden="true">↓</span></a>`).join("")}</div>`;
 document.getElementById("genres").innerHTML = GENRES.map(g=>`<span>${esc(g)}</span>`).join("");
 document.getElementById("updated").textContent = "Updated " + SITE.updated;
 
