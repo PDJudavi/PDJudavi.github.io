@@ -114,6 +114,7 @@ h2 small{display:block;font-family:var(--f-body);font-weight:400;font-size:14px;
 
 /* show more */
 .more{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:28px;padding:16px;background:transparent;color:var(--fg);border:1px solid var(--line);border-radius:999px;font:500 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:border-color .2s,background .2s}
+.more[hidden]{display:none}
 .more span{color:var(--muted)}
 .more:hover,.more:focus-visible{border-color:var(--accent);background:var(--surface);outline:none}
 .more .arw{color:var(--accent);transition:transform .25s ease}
