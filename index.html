@@ -405,10 +405,12 @@ const DEMO = { src: "", title: "Demo Reel", sub: "Selected demos · 2026" };
     const step = w/BARS, bw = Math.max(1.5, step*0.55);
     const prog = audio.duration ? audio.currentTime/audio.duration : 0;
     const g = x.createLinearGradient(0,0,w,0); g.addColorStop(0,css("--accent")); g.addColorStop(1,css("--accent-2"));
-    const base = css("--line"), hov = css("--muted");
+    const base = css("--muted"), hov = css("--fg");
     peaks.forEach((p,i) => {
       const bh = Math.max(2, p*(h-4)), px = i*step + (step-bw)/2, f = (i+.5)/BARS;
-      x.fillStyle = f <= prog ? g : (hover >= 0 && f <= hover ? hov : base);
+      const played = f <= prog, hovered = hover >= 0 && f <= hover;
+      x.fillStyle = played ? g : (hovered ? hov : base);
+      x.globalAlpha = played ? 1 : (hovered ? .9 : .45);
       x.beginPath(); x.roundRect ? x.roundRect(px,(h-bh)/2,bw,bh,bw/2) : x.rect(px,(h-bh)/2,bw,bh); x.fill();
     });
   }
