@@ -260,11 +260,11 @@ const RELEASES = [
   {artist:"Crush", title:"Sweet Love", cover:"covers/6942e17e35ccf.webp", roles:["C","A"], note:"취향저격 그녀 X Crush"},
   {artist:"Black Combat OST", title:"CIVIL WAR", cover:"covers/6942e1705e6ff.webp", roles:["C","A"], note:"Tussle Over · Fall out"},
   {artist:"존 노 John Noh", title:"Birth OST", cover:"covers/6942e17112578.webp", roles:["C","A","S"], note:"우리가 함께 한다는 것은 · lumen"},
+  {artist:"유희도", title:"List (リスト)", cover:"covers/6942e1708118a.webp", roles:["C","A"]},
+  {artist:"김성중", title:"Spotlight", cover:"covers/6942e1705ae0c.webp", roles:["W","C","A"]},
   {artist:"SHIN WONHO", title:"Placebo", cover:"covers/69ac6cc33da0a.webp", roles:["A"], note:"ONE — Track 04"},
   {artist:"bigguyrobin", title:"참 우스운 일이야", cover:"covers/697ae3cab9767.webp", roles:["A"], note:"feat. 예디안"},
-  {artist:"김성중", title:"Spotlight", cover:"covers/6942e1705ae0c.webp", roles:["W","C","A"]},
   {artist:"WISH", title:"Snow and you", cover:"covers/694a0f8f83081.webp", roles:["V"], note:"swingBY PROJECT Vol.1"},
-  {artist:"유희도", title:"List (リスト)", cover:"covers/6942e1708118a.webp", roles:["C","A"]},
   {artist:"TOMi", title:"Take my hand", cover:"covers/6942e32490526.webp", roles:["W","C","A"]},
   {artist:"Great Guys", title:"RUN", cover:"covers/6942e17112ee2.webp", roles:["C","A"]},
   {artist:"DOJEHYUN", title:"NTNS", cover:"covers/6942e1705b504.webp", roles:["W","C","A"]},
@@ -322,15 +322,15 @@ document.getElementById("genres").innerHTML = GENRES.map(g=>`<span>${esc(g)}</sp
 document.getElementById("updated").textContent = "Updated " + SITE.updated;
 
 let active = "all";
-const LIMIT = 4;
+const LIMIT = { rel:6, stage:4 };
 const expanded = { rel:false, stage:false };
 function moreBtn(id, key, total, anchor){
   const b = document.getElementById(id);
-  b.hidden = total <= LIMIT;
+  b.hidden = total <= LIMIT[key];
   b.setAttribute("aria-expanded", expanded[key]);
   b.innerHTML = expanded[key]
-    ? `접기 <span>Show less</span><span class="arw" aria-hidden="true">↓</span>`
-    : `더 보기 <span>+${total-LIMIT}</span><span class="arw" aria-hidden="true">↓</span>`;
+    ? `Show less <span class="arw" aria-hidden="true">↓</span>`
+    : `Show more <span>+${total-LIMIT[key]}</span><span class="arw" aria-hidden="true">↓</span>`;
   b.onclick = () => {
     const closing = expanded[key]; expanded[key] = !expanded[key]; render[key]();
     if (closing) document.getElementById(anchor).scrollIntoView({block:"start"});
@@ -342,7 +342,7 @@ function renderFilters(){
 }
 function renderGrid(){
   const list = RELEASES.filter(r => active==="all" || r.roles.includes(active));
-  const shown = expanded.rel ? list : list.slice(0, LIMIT);
+  const shown = expanded.rel ? list : list.slice(0, LIMIT.rel);
   document.getElementById("grid").innerHTML = shown.map(r => {
     const art = r.cover
       ? `<img src="${esc(r.cover)}" alt="${esc(r.title)} cover" loading="lazy">`
@@ -364,7 +364,7 @@ document.getElementById("filters").addEventListener("click", e => {
   active = b.dataset.k; expanded.rel = false; renderFilters(); renderGrid();
 });
 function renderStage(){
-document.getElementById("log").innerHTML = (expanded.stage ? STAGE : STAGE.slice(0, LIMIT)).map(s => `
+document.getElementById("log").innerHTML = (expanded.stage ? STAGE : STAGE.slice(0, LIMIT.stage)).map(s => `
   <div class="log-row${s.isNew?" new":""}">
     <div class="thumb">${s.img?`<img src="${esc(s.img)}" alt="${esc(s.what)}" loading="lazy">`:""}</div>
     <div><div class="yr">${s.year ?? ""}</div><div class="what">${esc(s.what)}</div>${s.detail?`<div class="detail">${esc(s.detail)}</div>`:""}</div>
