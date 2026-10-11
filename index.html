@@ -112,6 +112,13 @@ h2 small{display:block;font-family:var(--f-body);font-weight:400;font-size:14px;
 .log-row.new .what::after{content:"NEW";font-family:var(--f-mono);font-weight:500;font-size:10px;letter-spacing:.1em;color:var(--bg);background:var(--accent-2);padding:2px 6px;border-radius:3px;margin-left:10px;vertical-align:3px}
 @media (max-width:620px){.log-row{grid-template-columns:64px minmax(0,1fr);gap:14px;align-items:start}.log-row .thumb{width:64px}.log-row .tag{grid-column:2;text-align:left}}
 
+/* show more */
+.more{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:28px;padding:16px;background:transparent;color:var(--fg);border:1px solid var(--line);border-radius:999px;font:500 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:border-color .2s,background .2s}
+.more span{color:var(--muted)}
+.more:hover,.more:focus-visible{border-color:var(--accent);background:var(--surface);outline:none}
+.more .arw{color:var(--accent);transition:transform .25s ease}
+.more[aria-expanded="true"] .arw{transform:rotate(180deg)}
+
 /* screen */
 .screen{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:22px;display:flex;flex-direction:column;gap:8px;min-width:0}
@@ -165,6 +172,7 @@ footer{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transfo
       <h2>Stage Arrangement<small>무대 편곡 · 라이브</small></h2>
     </div>
     <div class="log" id="log"></div>
+    <button type="button" class="more" id="more-stage" aria-controls="log"></button>
   </section>
 
   <section id="releases">
@@ -173,6 +181,7 @@ footer{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transfo
       <div class="filters" id="filters" role="group" aria-label="Filter by role"></div>
     </div>
     <div class="grid" id="grid"></div>
+    <button type="button" class="more" id="more-rel" aria-controls="grid"></button>
   </section>
 
   <section id="screen">
@@ -269,13 +278,28 @@ document.getElementById("genres").innerHTML = GENRES.map(g=>`<span>${esc(g)}</sp
 document.getElementById("updated").textContent = "Updated " + SITE.updated;
 
 let active = "all";
+const LIMIT = 4;
+const expanded = { rel:false, stage:false };
+function moreBtn(id, key, total, anchor){
+  const b = document.getElementById(id);
+  b.hidden = total <= LIMIT;
+  b.setAttribute("aria-expanded", expanded[key]);
+  b.innerHTML = expanded[key]
+    ? `접기 <span>Show less</span><span class="arw" aria-hidden="true">↓</span>`
+    : `더 보기 <span>+${total-LIMIT}</span><span class="arw" aria-hidden="true">↓</span>`;
+  b.onclick = () => {
+    const closing = expanded[key]; expanded[key] = !expanded[key]; render[key]();
+    if (closing) document.getElementById(anchor).scrollIntoView({block:"start"});
+  };
+}
 function renderFilters(){
   document.getElementById("filters").innerHTML = FILTERS.map(([k,l]) =>
     `<button type="button" id="f-${k}" data-k="${k}" aria-pressed="${k===active}">${l}</button>`).join("");
 }
 function renderGrid(){
   const list = RELEASES.filter(r => active==="all" || r.roles.includes(active));
-  document.getElementById("grid").innerHTML = list.map(r => {
+  const shown = expanded.rel ? list : list.slice(0, LIMIT);
+  document.getElementById("grid").innerHTML = shown.map(r => {
     const art = r.cover
       ? `<img src="${esc(r.cover)}" alt="${esc(r.title)} cover" loading="lazy">`
       : `<div class="gen" style="--h:${hue(r.artist+r.title)}"><span class="a">${esc(r.artist)}</span><span class="t">${esc(r.title)}</span></div>`;
@@ -289,21 +313,26 @@ function renderGrid(){
         ${r.link?`<a class="listen" href="${esc(r.link)}" target="_blank" rel="noopener">Listen ↗</a>`:""}
       </div></article>`;
   }).join("");
+  moreBtn("more-rel", "rel", list.length, "releases");
 }
 document.getElementById("filters").addEventListener("click", e => {
   const b = e.target.closest("button"); if(!b) return;
-  active = b.dataset.k; renderFilters(); renderGrid();
+  active = b.dataset.k; expanded.rel = false; renderFilters(); renderGrid();
 });
-document.getElementById("log").innerHTML = STAGE.map(s => `
+function renderStage(){
+document.getElementById("log").innerHTML = (expanded.stage ? STAGE : STAGE.slice(0, LIMIT)).map(s => `
   <div class="log-row${s.isNew?" new":""}">
     <div class="thumb">${s.img?`<img src="${esc(s.img)}" alt="${esc(s.what)}" loading="lazy">`:""}</div>
     <div><div class="yr">${s.year ?? ""}</div><div class="what">${esc(s.what)}</div>${s.detail?`<div class="detail">${esc(s.detail)}</div>`:""}</div>
     <div class="tag">${esc(s.tag)}</div>
   </div>`).join("");
+moreBtn("more-stage", "stage", STAGE.length, "stage");
+}
+const render = { rel: renderGrid, stage: renderStage };
 document.getElementById("film").innerHTML = FILM.map(f => `
   <div class="card"><span class="k">${esc(f.kind)}</span><h3>${esc(f.title)}${f.isNew?`<span class="new-badge">NEW</span>`:""}</h3><p>${esc(f.desc)}</p></div>`).join("");
 
-renderFilters(); renderGrid();
+renderFilters(); renderGrid(); renderStage();
 </script>
 </body>
 </html>
