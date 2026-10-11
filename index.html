@@ -64,6 +64,32 @@ section{scroll-margin-top:72px}
 .genres{display:flex;flex-wrap:wrap;gap:8px}
 .genres span{font-family:var(--f-mono);font-size:12px;padding:5px 11px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
 
+/* demo reel */
+.reel{display:flex;align-items:center;gap:clamp(14px,2vw,22px);padding:16px clamp(14px,2vw,22px) 16px 16px;background:var(--surface);border:1px solid var(--line);border-radius:999px;max-width:100%}
+.reel-play{flex:none;width:60px;height:60px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;color:var(--bg);
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 0 0 color-mix(in oklab,var(--accent-2) 55%,transparent);transition:transform .15s ease,box-shadow .3s ease}
+.reel-play svg{width:24px;height:24px;fill:currentColor}
+.reel-play .i-pause{display:none}
+.reel.playing .reel-play .i-play{display:none}
+.reel.playing .reel-play .i-pause{display:block}
+.reel-play:hover{transform:scale(1.06)}
+.reel-play:active{transform:scale(.96)}
+.reel-play:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+.reel-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.reel-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;min-width:0}
+.reel-title{font-family:var(--f-display);font-weight:600;font-size:15px;letter-spacing:-.01em}
+.reel-sub{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.reel-wave-row{display:flex;align-items:center;gap:14px;min-width:0}
+.reel-wave{flex:1;min-width:0;height:48px;display:block;cursor:pointer;border-radius:4px}
+.reel-wave:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.reel-time{flex:none;font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:7.5ch;text-align:right}
+.reel.empty .reel-wave{cursor:default}
+@media (prefers-reduced-motion:no-preference){
+  .reel:not(.playing):not(.empty) .reel-play{animation:pulse 2.4s ease-out infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in oklab,var(--accent-2) 50%,transparent)}70%,100%{box-shadow:0 0 0 14px transparent}}
+}
+@media (max-width:520px){.reel{border-radius:20px;padding:14px}.reel-play{width:52px;height:52px}.reel-wave{height:40px}}
+
 /* section heads */
 .sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:16px;border-top:1px solid var(--line);padding-top:20px;margin-bottom:28px}
 h2{font-family:var(--f-display);font-weight:600;font-size:clamp(26px,3.4vw,40px);letter-spacing:-.02em;margin:0;text-wrap:balance}
@@ -166,6 +192,23 @@ footer{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transfo
       <div class="stats" id="stats"></div>
     </div>
     <div class="genres" id="genres"></div>
+    <div class="reel" id="reel">
+      <button type="button" class="reel-play" id="reel-play" aria-label="Play demo reel">
+        <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
+        <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>
+      </button>
+      <div class="reel-body">
+        <div class="reel-head">
+          <span class="reel-title" id="reel-title"></span>
+          <span class="reel-sub" id="reel-sub"></span>
+        </div>
+        <div class="reel-wave-row">
+          <canvas class="reel-wave" id="reel-wave" role="slider" tabindex="0" aria-label="Demo reel position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></canvas>
+          <span class="reel-time" id="reel-time">0:00</span>
+        </div>
+      </div>
+      <audio id="reel-audio" preload="metadata"></audio>
+    </div>
   </header>
 
   <section id="stage">
@@ -334,6 +377,84 @@ document.getElementById("film").innerHTML = FILM.map(f => `
   <div class="card"><span class="k">${esc(f.kind)}</span><h3>${esc(f.title)}${f.isNew?`<span class="new-badge">NEW</span>`:""}</h3><p>${esc(f.desc)}</p></div>`).join("");
 
 renderFilters(); renderGrid(); renderStage();
+
+/* ===== DEMO REEL — set src to an audio file path (e.g. "audio/demo-reel.mp3") to go live ===== */
+const DEMO = { src: "", title: "Demo Reel", sub: "Selected demos · 2026" };
+
+(function(){
+  const reel = document.getElementById("reel"), btn = document.getElementById("reel-play"),
+        cv = document.getElementById("reel-wave"), audio = document.getElementById("reel-audio"),
+        timeEl = document.getElementById("reel-time");
+  document.getElementById("reel-title").textContent = DEMO.title;
+  document.getElementById("reel-sub").textContent = DEMO.src ? DEMO.sub : "Coming soon";
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const fmt = t => !isFinite(t) ? "--:--" : `${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,"0")}`;
+  const BARS = 120;
+  // placeholder shape until real peaks are decoded (deterministic, music-like envelope)
+  let peaks = Array.from({length:BARS}, (_,i) => {
+    const x = Math.sin(i*12.9898)*43758.5453; const n = x - Math.floor(x);
+    const env = 0.45 + 0.35*Math.sin(i/BARS*Math.PI*3.2) * Math.sin(i/BARS*Math.PI);
+    return Math.max(.12, Math.min(1, env*(0.55+0.6*n)));
+  });
+  let hover = -1;
+  function draw(){
+    const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+    if (!w) return;
+    cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
+    const x = cv.getContext("2d"); x.setTransform(dpr,0,0,dpr,0,0); x.clearRect(0,0,w,h);
+    const step = w/BARS, bw = Math.max(1.5, step*0.55);
+    const prog = audio.duration ? audio.currentTime/audio.duration : 0;
+    const g = x.createLinearGradient(0,0,w,0); g.addColorStop(0,css("--accent")); g.addColorStop(1,css("--accent-2"));
+    const base = css("--line"), hov = css("--muted");
+    peaks.forEach((p,i) => {
+      const bh = Math.max(2, p*(h-4)), px = i*step + (step-bw)/2, f = (i+.5)/BARS;
+      x.fillStyle = f <= prog ? g : (hover >= 0 && f <= hover ? hov : base);
+      x.beginPath(); x.roundRect ? x.roundRect(px,(h-bh)/2,bw,bh,bw/2) : x.rect(px,(h-bh)/2,bw,bh); x.fill();
+    });
+  }
+  new ResizeObserver(draw).observe(cv);
+
+  async function loadPeaks(){
+    try{
+      const buf = await (await fetch(DEMO.src)).arrayBuffer();
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const data = (await ctx.decodeAudioData(buf)).getChannelData(0); ctx.close && ctx.close();
+      const size = Math.floor(data.length/BARS), out = [];
+      for (let b=0;b<BARS;b++){ let m=0; for (let j=b*size;j<(b+1)*size;j+=16){ const v=Math.abs(data[j]); if(v>m) m=v; } out.push(m); }
+      const max = Math.max(...out) || 1; peaks = out.map(v => Math.max(.06, v/max)); draw();
+    }catch(e){ /* keep placeholder shape */ }
+  }
+
+  if (!DEMO.src){
+    reel.classList.add("empty");
+    btn.setAttribute("aria-label","Demo reel coming soon");
+    btn.addEventListener("click", () => {
+      const sub = document.getElementById("reel-sub"); sub.textContent = "Coming soon — 곧 공개됩니다";
+    });
+    timeEl.textContent = "--:--";
+    return;
+  }
+  audio.src = DEMO.src; loadPeaks();
+  const seek = r => { if (audio.duration){ audio.currentTime = Math.max(0,Math.min(1,r))*audio.duration; draw(); } };
+  btn.addEventListener("click", () => audio.paused ? audio.play() : audio.pause());
+  audio.addEventListener("play", () => { reel.classList.add("playing"); btn.setAttribute("aria-label","Pause demo reel"); });
+  audio.addEventListener("pause", () => { reel.classList.remove("playing"); btn.setAttribute("aria-label","Play demo reel"); });
+  audio.addEventListener("loadedmetadata", () => { timeEl.textContent = `0:00 / ${fmt(audio.duration)}`; });
+  audio.addEventListener("timeupdate", () => {
+    timeEl.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+    cv.setAttribute("aria-valuenow", Math.round(audio.currentTime/(audio.duration||1)*100)); draw();
+  });
+  audio.addEventListener("ended", () => { audio.currentTime = 0; draw(); });
+  cv.addEventListener("click", e => { const r = cv.getBoundingClientRect(); seek((e.clientX-r.left)/r.width); });
+  cv.addEventListener("mousemove", e => { const r = cv.getBoundingClientRect(); hover = (e.clientX-r.left)/r.width; draw(); });
+  cv.addEventListener("mouseleave", () => { hover = -1; draw(); });
+  cv.addEventListener("keydown", e => {
+    if (!audio.duration) return;
+    if (e.key === "ArrowRight") { audio.currentTime = Math.min(audio.duration, audio.currentTime+5); e.preventDefault(); }
+    if (e.key === "ArrowLeft") { audio.currentTime = Math.max(0, audio.currentTime-5); e.preventDefault(); }
+    if (e.key === " " || e.key === "Enter") { btn.click(); e.preventDefault(); }
+  });
+})();
 </script>
 </body>
 </html>
