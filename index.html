@@ -107,6 +107,8 @@ h2 small{display:block;font-family:var(--f-body);font-weight:400;font-size:14px;
 .log-row .what{font-family:var(--f-display);font-weight:600;font-size:clamp(16px,1.8vw,20px);letter-spacing:-.01em;line-height:1.25}
 .log-row .detail{font-size:13.5px;color:var(--muted);margin-top:4px}
 .log-row .tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:right}
+.new-badge{font-family:var(--f-mono);font-weight:500;font-size:10px;letter-spacing:.1em;color:var(--bg);background:var(--accent-2);padding:2px 6px;border-radius:3px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+.sleeve .new-badge{position:absolute;top:10px;left:10px;margin:0;z-index:2}
 .log-row.new .what::after{content:"NEW";font-family:var(--f-mono);font-weight:500;font-size:10px;letter-spacing:.1em;color:var(--bg);background:var(--accent-2);padding:2px 6px;border-radius:3px;margin-left:10px;vertical-align:3px}
 @media (max-width:620px){.log-row{grid-template-columns:64px minmax(0,1fr);gap:14px;align-items:start}.log-row .thumb{width:64px}.log-row .tag{grid-column:2;text-align:left}}
 
@@ -201,10 +203,10 @@ const GENRES = ["Hyperpop","Pop","Band","DnB","UK Garage","French House","Boom B
 // roles: W = Lyrics/Written, C = Composed, A = Arranged, V = Vocal Directing, S = Scoring
 // cover: image URL or data URI (null → generated sleeve) / link: streaming URL / year: release year
 const RELEASES = [
+  {artist:"강승식", title:"우리가 담긴 계절", cover:"covers/6a5794c229381.webp", roles:["C","A"], isNew:true},
   {artist:"Crush", title:"Sweet Love", cover:"covers/6942e17e35ccf.webp", roles:["C","A"], note:"취향저격 그녀 X Crush"},
   {artist:"Black Combat OST", title:"CIVIL WAR", cover:"covers/6942e1705e6ff.webp", roles:["C","A"], note:"Tussle Over · Fall out"},
   {artist:"존 노 John Noh", title:"Birth OST", cover:"covers/6942e17112578.webp", roles:["C","A","S"], note:"우리가 함께 한다는 것은 · lumen"},
-  {artist:"강승식", title:"우리가 담긴 계절", cover:"covers/6a5794c229381.webp", roles:["C","A"]},
   {artist:"SHIN WONHO", title:"Placebo", cover:"covers/69ac6cc33da0a.webp", roles:["A"], note:"ONE — Track 04"},
   {artist:"bigguyrobin", title:"참 우스운 일이야", cover:"covers/697ae3cab9767.webp", roles:["A"], note:"feat. 예디안"},
   {artist:"김성중", title:"Spotlight", cover:"covers/6942e1705ae0c.webp", roles:["W","C","A"]},
@@ -241,7 +243,7 @@ const STAGE = [
 ];
 
 const FILM = [
-  {kind:"Short Film · 2026", title:"성장통", desc:"단편영화 음악 · Original score"},
+  {kind:"Short Film · 2026", title:"성장통", desc:"단편영화 음악 · Original score", isNew:true},
   {kind:"Short Film · 2021", title:"존재", desc:"단편영화 음악 · Original score"},
   {kind:"Film OST · 2022", title:"탄생 (Birth)", desc:"존 노 — 우리가 함께 한다는 것은 · lumen · Composition, arrangement & scoring"},
   {kind:"OST", title:"Black Combat — CIVIL WAR", desc:"Tussle Over · Fall out"},
@@ -255,6 +257,10 @@ const FILTERS = [["all","All"],["C","Composed"],["A","Arranged"],["W","Lyrics"],
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const hue = s => { let h=0; for (const ch of s) h = (h*31 + ch.codePointAt(0)) % 360; return h; };
 
+const newFirst = a => a.filter(x=>x.isNew).concat(a.filter(x=>!x.isNew));
+RELEASES.splice(0, RELEASES.length, ...newFirst(RELEASES));
+STAGE.splice(0, STAGE.length, ...newFirst(STAGE));
+FILM.splice(0, FILM.length, ...newFirst(FILM));
 document.getElementById("stats").innerHTML =
   `<div class="stat"><b>2020</b><small>Since</small></div>
    <div class="jump">${[["stage","Stage"],["releases","Releases"],["screen","Film & OST"],["contact","Contact"]]
@@ -275,7 +281,7 @@ function renderGrid(){
       : `<div class="gen" style="--h:${hue(r.artist+r.title)}"><span class="a">${esc(r.artist)}</span><span class="t">${esc(r.title)}</span></div>`;
     const roles = r.roles.map(k=>`<span class="role ${k==="C"||k==="W"?"c":""}">${ROLE_LABEL[k]}</span>`).join("");
     return `<article class="rel">
-      <div class="sleeve">${art}</div>
+      <div class="sleeve">${art}${r.isNew?`<span class="new-badge">NEW</span>`:""}</div>
       <div class="meta">
         <div class="title">${esc(r.title)}${r.year?` <span class="artist">· ${r.year}</span>`:""}</div>
         <div class="artist">${esc(r.artist)}${r.note?` — ${esc(r.note)}`:""}</div>
@@ -295,7 +301,7 @@ document.getElementById("log").innerHTML = STAGE.map(s => `
     <div class="tag">${esc(s.tag)}</div>
   </div>`).join("");
 document.getElementById("film").innerHTML = FILM.map(f => `
-  <div class="card"><span class="k">${esc(f.kind)}</span><h3>${esc(f.title)}</h3><p>${esc(f.desc)}</p></div>`).join("");
+  <div class="card"><span class="k">${esc(f.kind)}</span><h3>${esc(f.title)}${f.isNew?`<span class="new-badge">NEW</span>`:""}</h3><p>${esc(f.desc)}</p></div>`).join("");
 
 renderFilters(); renderGrid();
 </script>
